@@ -586,27 +586,6 @@ footer a.tz{
 	z-index:1;
 }
 
-footer a.tz:before{
-	content: '';
-	background: url('http://cdn.tutorialzine.com/misc/enhance/v2_footer_bg.png') no-repeat 0 -53px;
-	width: 138px;
-	height: 20px;
-	display: inline-block;
-	position: relative;
-	bottom: -3px;
-}
-
-footer .close{
-	position: absolute;
-	cursor: pointer;
-	width: 8px;
-	height: 8px;
-	background: url('http://cdn.tutorialzine.com/misc/enhance/v2_footer_bg.png') no-repeat 0 0px;
-	top:10px;
-	right:10px;
-	z-index: 3;
-}
-
 footer #tzine-actions{
 	position: absolute;
 	top: 8px;
@@ -618,7 +597,7 @@ footer #tzine-actions{
 }
 
 footer #tzine-actions iframe{
-	display: inline-block;
+	display: block;
 	height: 21px;
 	width: 95px;
 	position: relative;
