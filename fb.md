@@ -460,7 +460,7 @@ $$
 $$
 \begin{align}
 L[1]&=\frac{1}{p}\\
-L[t^a]&=\frac{\Gamma(a+1)}{p^{a+1}}\quad(a>-1)\\
+L[t^a]&=\frac{\Gamma(a+1)}{p^{a+1}}\quad(a>-1)\quad \Gamma(n)=(n-1)!\\
 L[e^{\lambda t}]&=\frac{1}{p-\lambda}\\
 L[\sin{wt}]&=\frac{w}{p^2+w^2}\\
 L[\cos{wt}]&=\frac{p}{p^2+w^2}\\
