@@ -278,7 +278,6 @@ body>*:last-child {
 }
 #write a:hover {
     border-radius: 6px;
-    border-bottom: 2px solid transparent;
     background-color: var(--abottom-color);
     cursor: pointer;
 }
@@ -436,6 +435,7 @@ h3 {
     margin: 1.2em auto 0.2em;
     padding-left: 9px;
     border-left: 5px solid var(--titlebefore-color);
+    border-radius: 4px;
 }
 h4 {
     margin-top: 1.0em;
@@ -446,6 +446,7 @@ h4 {
     display: inline-block;
     border: 1px solid var(--titlebefore-color);
     border-top: 4px solid var(--titlebefore-color);
+    border-radius: 4px;
 }
 #write>h3:hover:before,
 #write>h4:hover:before {
@@ -568,6 +569,7 @@ blockquote:hover:before {
 table {
     padding: 0;
     word-break: initial;
+    border-collapse: separate;
 }
 table tr:nth-child(2n) {
     background-color: var(--tableevenrow-color);
@@ -586,6 +588,18 @@ table tr td {
     text-align: left;
     margin: 0;
     padding: 6px 13px;
+}
+table tr:first-child th:first-child {
+    border-top-left-radius: 5px;
+}
+table tr:first-child th:last-child {
+    border-top-right-radius: 5px;
+}
+table tr:last-child td:last-child {
+    border-bottom-right-radius: 5px;
+}
+table tr:last-child td:first-child {
+    border-bottom-left-radius: 5px;
 }
 table tr th:first-child,
 table tr td:first-child {
@@ -606,7 +620,7 @@ table tr:hover {
 }
 .md-fences {
     background: var(--codeblockbg-color);
-    border-radius: 3px;
+    border-radius: 5px;
     color: var(--codeblockfont-color);
     overflow-wrap: break-word;
     word-wrap: break-word;
@@ -652,7 +666,7 @@ pre.md-meta-block {
 }
 #write code {
     padding: 2px 4px;
-    border-radius: 2px;
+    border-radius: 5px;
     font-family: var(--code-font);
     font-size: 0.9rem;
     color: var(--code-color);
@@ -855,7 +869,7 @@ kbd {
     /* dy color */
     --select-text-bg-color: #ffafa3; /* 文本选中背景色（粉红） */
     /*--primary-color: red;*/
-    --bg-color: rgb(248, 248, 248); /* 整体背景色（白色） */
+    --bg-color: #fff; /* 整体背景色（白色） */
     --sidebarbg-color: #eee; /* 侧边栏背景色（灰色） */
     --focus-color: #ff5d52; /* 点击某些元素（如标题）显示的颜色（偏红） */
     --codeblockbg-color: rgba(238, 238, 238, 0.2); /* 代码块背景色（灰色） */
@@ -907,6 +921,7 @@ kbd {
     /* bg image */
     /* --bgimg-url: url(file:///C://Users//12915//AppData//Roaming//Typora/themes/bg-light.gif); */
 }
+
 
 
 mjx-container[jax="SVG"] {
