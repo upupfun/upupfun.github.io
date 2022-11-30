@@ -53,7 +53,5 @@ X = {u|u ∈ V (G), 且 $\text{dist}(u_0, u)$ 为偶数}，Y = {u|u ∈ V (G), �
 > \sum \deg^+(v)=\sum \deg^-(v)=\varepsilon(G)
 > $$
 
-$$
-a^2=b^2+c^2
-$$
+
 
