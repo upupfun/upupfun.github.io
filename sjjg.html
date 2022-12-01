@@ -240,43 +240,14 @@ body {
     color: var(--atext-color);
     text-decoration: none;
 }
-#write a span {
-    cursor: pointer;
-    display: inline-block;
-    position: relative;
-    transition: 0.5s;
-}
-#write a span:after {
-    content: '»';
-    position: absolute;
-    opacity: 0;
-    top: 0;
-    right: -20px;
-    transition: 0.5s;
-}
 #write a:hover {
     border-radius: 6px;
     background-color: var(--abottom-color);
     cursor: pointer;
 }
-#write a:hover span {
-    padding-right: 25px;
-}
-#write a:hover span:after {
-    opacity: 1;
-    right: 0;
-}
 #write h2 a,
 #write h4 a {
     border-bottom: none !important;
-}
-h2 a:hover:before,
-h4 a:hover:before {
-    content: none !important;
-}
-#write a:empty {
-    padding-left: 0px;
-    padding-right: 0px;
 }
 /* 目录 */
 #write a.md-toc-inner {
@@ -420,19 +391,19 @@ h4 {
 h2:hover:before,
 h3:hover:before,
 h4:hover:before,
-h5:hover:before,
-h6:hover:before {
+#write h5:hover:before,
+#write h6:hover:before {
     color: var(--focus-color);
 }
 h2:hover,
 h3:hover,
-h4:hover {
+h4:hover{
     border-color: var(--focus-color);
 }
-h5::before,
-h6::before {
+#write h5::before,
+#write h6::before {
     position: absolute;
-    right: calc(100% + .75em);
+    right: calc(100% + .55em);
     top: 0;
     color: var(--titlebefore-color);
     font-size: 0.8rem;
@@ -441,17 +412,16 @@ h6::before {
     white-space: nowrap;
     border: 0;
 }
-h5,
-h6 {
+#write h5, #write h6 {
     font-size: 1.1rem;
 }
-h5::before {
+#write h5::before {
     content: 'h5';
-    top: 0.18rem;
+    top: 0.2rem;
 }
-h6::before {
+#write h6::before {
     content: 'h6';
-    top: 0.18rem;
+    top: 0.2rem;
 }
 p,
 blockquote,
@@ -552,7 +522,7 @@ table tr:hover {
     background-color: var(--tablefocusrow-color);
 }
 /* 代码块 */
-.CodeMirror pre {
+#write .CodeMirror pre {
     font-family: var(--code-font);
     font-weight: 500;
     font-size: 0.9rem;
@@ -576,7 +546,7 @@ table tr:hover {
 .cm-s-inner .CodeMirror-linenumber {
     color: var(--codeblocknum-color);
 }
-.CodeMirror-cursors .CodeMirror-cursor {
+#write .CodeMirror-cursors .CodeMirror-cursor {
     border-left: 2px solid var(--focus-color);
 }
 .md-fences:not(.md-focus) .CodeMirror-code>*:hover {
@@ -591,7 +561,7 @@ table tr:hover {
     font-size: 100%;
 }
 /* front-matter */
-pre.md-meta-block {
+#write pre.md-meta-block {
     font-family: var(--body-font);
     color: var(--yaml-color) !important;
     padding: 15px;
@@ -600,8 +570,17 @@ pre.md-meta-block {
     line-height: 1.45;
     border-radius: 5px;
 }
+/* 高亮 */
+#write span[md-inline="highlight"] mark {
+    background-color: var(--highlightbg-color);
+    border-radius: 2px;
+    padding: 2px 4px;
+    margin: 0 2px;
+    color: var(--highlight-color);
+    font-weight: 500;
+}
 /* 行内代码 */
-code {
+#write code {
     padding: 2px 4px;
     border-radius: 5px;
     font-family: var(--code-font);
@@ -655,7 +634,6 @@ img:hover {
     background-color: var(--write-color);
 }
 .outline-content {
-    margin: 5% 0 5%;
     background-color: var(--sidebarbg-color);
     border-radius: 30px;
     box-shadow: #84A1A8 0px 10px 15px;
@@ -770,6 +748,8 @@ img:hover {
     --abottom-color: #81d8cf;/* 超链接下划线颜色（青色） */
     --code-color: #ff3502;/* 行内代码前景色（红色） */
     --codebg-color: #f8f5ec;/* 行内代码背景色（淡红） */
+    --highlight-color: red;/* 高亮文本前景色（红色） */
+    --highlightbg-color: yellow; /* 高亮文本背景色（黄色） */
     --split-color: #00c4b6;/* 分割线颜色（绿色） */
     --body-color: #000000;/* 文本颜色（黑色） */
     --para-color: #000000;/* 段落文本颜色（黑色） */
