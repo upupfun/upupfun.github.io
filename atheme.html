@@ -233,20 +233,20 @@ body {
     margin-top: 30px;
 }
 /* 链接 */
-a {
+#write a {
     border-bottom: 2px solid var(--abottom-color);
     padding: 0 4px;
     transition: .5s;
     color: var(--atext-color);
     text-decoration: none;
 }
-a:hover {
+#write a:hover {
     border-radius: 6px;
     background-color: var(--abottom-color);
     cursor: pointer;
 }
-h2 a,
-h4 a {
+#write h2 a,
+#write h4 a {
     border-bottom: none !important;
 }
 /* 目录 */
@@ -391,8 +391,8 @@ h4 {
 h2:hover:before,
 h3:hover:before,
 h4:hover:before,
-h5:hover:before,
-h6:hover:before {
+#write h5:hover:before,
+#write h6:hover:before {
     color: var(--focus-color);
 }
 h2:hover,
@@ -400,8 +400,8 @@ h3:hover,
 h4:hover{
     border-color: var(--focus-color);
 }
-h5::before,
-h6::before {
+#write h5::before,
+#write h6::before {
     position: absolute;
     right: calc(100% + .55em);
     top: 0;
@@ -412,25 +412,16 @@ h6::before {
     white-space: nowrap;
     border: 0;
 }
-h5,
-h6 {
+#write h5, #write h6 {
     font-size: 1.1rem;
 }
-h5::before {
+#write h5::before {
     content: 'h5';
-    top: 0.18rem;
+    top: 0.2rem;
 }
-h6::before {
+#write h6::before {
     content: 'h6';
-    top: 0.18rem;
-}
-#write>h5.md-focus:before {
-    left: -1.5625rem;
-    top: .285714286rem;
-}
-#write>h6.md-focus:before {
-    left: -1.5625rem;
-    top: .285714286rem;
+    top: 0.2rem;
 }
 p,
 blockquote,
@@ -531,7 +522,7 @@ table tr:hover {
     background-color: var(--tablefocusrow-color);
 }
 /* 代码块 */
-.CodeMirror pre {
+#write .CodeMirror pre {
     font-family: var(--code-font);
     font-weight: 500;
     font-size: 0.9rem;
@@ -555,7 +546,7 @@ table tr:hover {
 .cm-s-inner .CodeMirror-linenumber {
     color: var(--codeblocknum-color);
 }
-.CodeMirror-cursors .CodeMirror-cursor {
+#write .CodeMirror-cursors .CodeMirror-cursor {
     border-left: 2px solid var(--focus-color);
 }
 .md-fences:not(.md-focus) .CodeMirror-code>*:hover {
@@ -579,8 +570,17 @@ table tr:hover {
     line-height: 1.45;
     border-radius: 5px;
 }
+/* 高亮 */
+#write span[md-inline="highlight"] mark {
+    background-color: var(--highlightbg-color);
+    border-radius: 2px;
+    padding: 2px 4px;
+    margin: 0 2px;
+    color: var(--highlight-color);
+    font-weight: 500;
+}
 /* 行内代码 */
-code {
+#write code {
     padding: 2px 4px;
     border-radius: 5px;
     font-family: var(--code-font);
@@ -634,7 +634,6 @@ img:hover {
     background-color: var(--write-color);
 }
 .outline-content {
-    margin: 5% 0 5%;
     background-color: var(--sidebarbg-color);
     border-radius: 30px;
     box-shadow: #84A1A8 0px 10px 15px;
@@ -749,6 +748,8 @@ img:hover {
     --abottom-color: #81d8cf;/* 超链接下划线颜色（青色） */
     --code-color: #ff3502;/* 行内代码前景色（红色） */
     --codebg-color: #f8f5ec;/* 行内代码背景色（淡红） */
+    --highlight-color: red;/* 高亮文本前景色（红色） */
+    --highlightbg-color: yellow; /* 高亮文本背景色（黄色） */
     --split-color: #00c4b6;/* 分割线颜色（绿色） */
     --body-color: #000000;/* 文本颜色（黑色） */
     --para-color: #000000;/* 段落文本颜色（黑色） */
@@ -760,10 +761,10 @@ img:hover {
 }
 
 
-</style><title>readme</title>
+</style><title>atheme</title>
 </head>
 <body class='typora-export os-windows typora-export-show-outline typora-export-no-collapse-outline'><div class='typora-export-content'>
-<div class="typora-export-sidebar"><div class="outline-content"><li class="outline-item-wrapper outline-h1"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#atheme">Atheme</a></div><ul class="outline-children"><li class="outline-item-wrapper outline-h2"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#前言">前言</a></div><ul class="outline-children"></ul></li><li class="outline-item-wrapper outline-h2"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#效果预览">效果预览</a></div><ul class="outline-children"><li class="outline-item-wrapper outline-h4"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#正常模式">正常模式</a></div><ul class="outline-children"></ul></li><li class="outline-item-wrapper outline-h4"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#夜间模式">夜间模式</a></div><ul class="outline-children"></ul></li></ul></li><li class="outline-item-wrapper outline-h2"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#使用方法">使用方法</a></div><ul class="outline-children"></ul></li></ul></li></div></div><div id='write'  class=''><h1 id='atheme'><span>Atheme</span></h1><blockquote><p><span>一份优雅的 typora 主题</span></p></blockquote><h2 id='前言'><span>前言</span></h2><p><span>本主题在 dyzj 主题基础上修改得到，原主题链接：</span><a href='https://github.com/muggledy/typora-dyzj-theme'><span>Typora主题css样式 (github.com)</span></a></p><h2 id='效果预览'><span>效果预览</span></h2><h4 id='正常模式'><span>正常模式</span></h4><p><img src="readme.assets/image-20221130112616055.png" alt="image-20221130112616055" style="zoom:80%;" /></p><h4 id='夜间模式'><span>夜间模式</span></h4><p><img src="readme.assets/image-20221130112645681.png" alt="image-20221130112645681" style="zoom:80%;" /></p><h2 id='使用方法'><span>使用方法</span></h2><ol start='' ><li><span>下载源码，地址：</span><a href='liano3/Atheme:(github.com)'><span>liano3/Atheme:(github.com)</span></a></li><li><span>解压压缩包，得到文件夹 atheme，文件 atheme.css、atheme-dark.css</span></li><li><span>把上面的 </span><code>文件夹atheme</code><span>，文件 </span><code>atheme.css</code><span>, </span><code>atheme-dark.css</code><span> 全部放入 typora 主题文件夹(文件-&gt;偏好设置-&gt;外观-&gt;打开主题文件夹)</span>
+<div class="typora-export-sidebar"><div class="outline-content"><li class="outline-item-wrapper outline-h1"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#atheme">Atheme</a></div><ul class="outline-children"><li class="outline-item-wrapper outline-h2"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#前言">前言</a></div><ul class="outline-children"></ul></li><li class="outline-item-wrapper outline-h2"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#效果预览">效果预览</a></div><ul class="outline-children"><li class="outline-item-wrapper outline-h4"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#正常模式">正常模式</a></div><ul class="outline-children"></ul></li><li class="outline-item-wrapper outline-h4"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#夜间模式">夜间模式</a></div><ul class="outline-children"></ul></li></ul></li><li class="outline-item-wrapper outline-h2"><div class="outline-item"><span class="outline-expander"></span><a class="outline-label" href="#使用方法">使用方法</a></div><ul class="outline-children"></ul></li></ul></li></div></div><div id='write'  class=''><h1 id='atheme'><span>Atheme</span></h1><blockquote><p><span>一份优雅的 typora 主题</span></p></blockquote><h2 id='前言'><span>前言</span></h2><p><span>本主题在 dyzj 主题基础上修改得到，原主题链接：</span><a href='https://github.com/muggledy/typora-dyzj-theme'><span>Typora主题css样式 (github.com)</span></a></p><h2 id='效果预览'><span>效果预览</span></h2><h4 id='正常模式'><span>正常模式</span></h4><p><img src="readme.assets/image-20221130112616055.png" alt="image-20221130112616055" style="zoom:80%;" /></p><h4 id='夜间模式'><span>夜间模式</span></h4><p><img src="readme.assets/image-20221130112645681.png" alt="image-20221130112645681" style="zoom:80%;" /></p><h2 id='使用方法'><span>使用方法</span></h2><ol start='' ><li><span>下载源码，地址：</span><a href='https://github.com/liano3/Atheme/archive/refs/heads/main.zip'><span>github</span></a><span> </span><span>	</span><span>or  </span><span>	</span><a href='https://gitee.com/ningli03/typora-atheme/repository/archive/master.zip'><span>gitee</span></a></li><li><span>解压压缩包，得到文件夹 atheme，文件 atheme.css、atheme-dark.css</span></li><li><span>把上面的 </span><code>文件夹atheme</code><span>，文件 </span><code>atheme.css</code><span>, </span><code>atheme-dark.css</code><span> 全部放入 typora 主题文件夹(文件-&gt;偏好设置-&gt;外观-&gt;打开主题文件夹)</span>
 <img src="readme.assets/image-20221130112424163.png" alt="image-20221130112424163" style="zoom:80%;" /></li><li><span>安装 </span><code>atheme/fonts</code><span> 文件夹下的所有字体(全选，右键安装)</span></li><li><span>重启typora，更换主题(Atheme或Atheme-dark)</span></li></ol></div></div>
 
 <script>(function(){var e=document.body.parentElement,t=[],n=null,i=document.body.classList.contains("typora-export-collapse-outline"),r=function(e,t,n){document.addEventListener(e,function(e){if(!e.defaultPrevented)for(var i=e.target;i&&i!=this;i=i.parentNode)if(i.matches(t)){!1===n.call(i,e)&&(e.preventDefault(),e.stopPropagation());break}},!1)};function o(){return e.scrollTop}r("click",".outline-expander",function(e){var t=this.closest(".outline-item-wrapper").classList;return t.contains("outline-item-open")?t.remove("outline-item-open"):t.add("outline-item-open"),d(),!1}),r("click",".outline-item",function(e){var t=this.querySelector(".outline-label");if(location.hash="#"+t.getAttribute("href"),i){var n=this.closest(".outline-item-wrapper").classList;n.contains("outline-item-open")||n.add("outline-item-open"),c(),n.add("outline-item-active")}});var a,s,l=function(){var e=o();n=null;for(var i=0;i<t.length&&t[i][1]-e<60;i++)n=t[i]},c=function(){document.querySelectorAll(".outline-item-active").forEach(e=>e.classList.remove("outline-item-active")),document.querySelectorAll(".outline-item-single.outline-item-open").forEach(e=>e.classList.remove("outline-item-open"))},d=function(){if(n){c();var e=document.querySelector('.outline-label[href="#'+(CSS.escape?CSS.escape(n[0]):n[0])+'"]');if(e)if(i){var t=e.closest(".outline-item-open>ul>.outline-item-wrapper");if(t)t.classList.add("outline-item-active");else{for(var r=(e=e.closest(".outline-item-wrapper")).parentElement.closest(".outline-item-wrapper");r;)r=(e=r).parentElement.closest(".outline-item-wrapper");e.classList.add("outline-item-active")}}else e.closest(".outline-item-wrapper").classList.add("outline-item-active")}};window.addEventListener("scroll",function(e){a&&clearTimeout(a),a=setTimeout(function(){l(),d()},300)});var u=function(){s=setTimeout(function(){!function(){t=[];var e=o();document.querySelector("#write").querySelectorAll("h1, h2, h3, h4, h5, h6").forEach(n=>{var i=n.getAttribute("id");t.push([i,e+n.getBoundingClientRect().y])})}(),l(),d()},300)};window.addEventListener("resize",function(e){s&&clearTimeout(s),u()}),u()})();</script></body>
