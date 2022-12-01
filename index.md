@@ -8,7 +8,7 @@
 
 #### typora主题
 
-[Atheme](https://github.com/liano3/Atheme)
+[Atheme](https://pro.liano.top/atheme)
 
 #### 作业查询
 
