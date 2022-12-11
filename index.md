@@ -10,11 +10,15 @@
 
 [Atheme](https://pro.liano.top/atheme)
 
-#### 作业查询
-
-[dd的主页 (ustc.edu.cn)](http://home.ustc.edu.cn/~donggua_cjd/)
-
 #### 时钟
 
 [CLOCK](https://pro.liano.top/clock.html)
+
+#### 复习资料
+
+[复变函数](https:pro.liano.top/fb)
+
+[图论](https:pro.liano.top/tl)
+
+[数据结构](https:pro.liano.top/sjjg)
 
