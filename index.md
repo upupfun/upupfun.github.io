@@ -10,10 +10,6 @@
 
 [Atheme](https://pro.liano.top/atheme)
 
-#### 时钟
-
-[CLOCK](https://pro.liano.top/clock.html)
-
 #### 复习资料
 
 [复变函数](https://pro.liano.top/fb)
