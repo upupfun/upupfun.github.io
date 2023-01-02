@@ -468,7 +468,7 @@ blockquote::before {
     font-weight: 500;
 }
 blockquote:hover {
-    box-shadow: #84A1A8 0px 8px 10px;
+    box-shadow: #84A1A8 0px 4px 6px;
     border-left: 3px solid var(--focus-color);
 }
 blockquote:hover:before {
@@ -533,7 +533,7 @@ table tr:hover {
     border: 1px solid #d0d5d7;
 }
 .md-fences:hover {
-    box-shadow: #84A1A8 0px 8px 10px;
+    box-shadow: #84A1A8 0px 4px 6px;
 }
 .CodeMirror-gutters {
     border-right: 1px solid rgb(199, 159, 159);
@@ -583,6 +583,9 @@ table tr:hover {
     color: var(--code-color);
     background-color: var(--codebg-color);
 }
+#write code:hover {
+    box-shadow: #84A1A8 0px 2px 3px;
+}
 /* 分割线 */
 hr {
     width: 80%;
@@ -616,7 +619,7 @@ img {
     border-radius: 5px;
 }
 img:hover {
-    box-shadow: #84A1A8 0px 10px 15px;
+    box-shadow: #84A1A8 0px 4px 6px;
 }
 .md-tag {
     color: inherit;
@@ -631,7 +634,7 @@ img:hover {
 .outline-content {
     background-color: var(--sidebarbg-color);
     border-radius: 30px;
-    box-shadow: #84A1A8 0px 10px 15px;
+    box-shadow: #84A1A8 0px 8px 10px;
 }
 .outline-item {
     font-size: 16px;
@@ -746,8 +749,8 @@ img:hover {
     --atext-color: black;/* 超链接文本颜色（黑色） */
     --ahover-color: #ffffffe6;/* 超链接悬停文本颜色（白色） */
     --abottom-color: #81d8cf;/* 超链接下划线颜色（青色） */
-    --code-color: #ff3502;/* 行内代码前景色（红色） */
-    --codebg-color: #f8f5ec;/* 行内代码背景色（淡红） */
+    --code-color: #ff6b02;/* 行内代码前景色（红色） */
+    --codebg-color: rgb(245, 245, 245);/* 行内代码背景色（灰色） */
     --highlight-color: red;/* 高亮文本前景色（红色） */
     --highlightbg-color: yellow; /* 高亮文本背景色（黄色） */
     --split-color: #00c4b6;/* 分割线颜色（绿色） */

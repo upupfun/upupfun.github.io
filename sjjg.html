@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset='UTF-8'><meta name='viewport' content='width=device-width initial-scale=1'>
-
+<link rel="icon" href="https://liano.top/img/avatar.png" sizes="16x16">
 <style type='text/css'>html {overflow-x: initial !important;}:root { --bg-color:#ffffff; --text-color:#333333; --select-text-bg-color:#B5D6FC; --select-text-font-color:auto; --monospace:"Lucida Console",Consolas,"Courier",monospace; --title-bar-height:20px; }
 .mac-os-11 { --title-bar-height:28px; }
 html { font-size: 14px; background-color: var(--bg-color); color: var(--text-color); font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; -webkit-font-smoothing: antialiased; }
@@ -452,7 +452,7 @@ ol:last-child {
 }
 /* 引用块 */
 blockquote {
-    border: 1px solid var(--blockquoteicon-color);
+    border-left: 2px solid var(--blockquoteicon-color);
     padding: 4px 15px;
     color: #666666;
     background-color: var(--blockquotebg-color);
@@ -468,7 +468,7 @@ blockquote::before {
     font-weight: 500;
 }
 blockquote:hover {
-    box-shadow: #84A1A8 0px 8px 10px;
+    box-shadow: #84A1A8 0px 4px 6px;
     border-left: 3px solid var(--focus-color);
 }
 blockquote:hover:before {
@@ -486,15 +486,18 @@ table tr:nth-child(2n) {
 table tr th {
     font-weight: bold;
     border: 1px solid var(--tableborder-color);
+    border-left: 0;
     background-color: var(--tablethbg-color);
-    border-bottom: 0;
-    text-align: left;
     margin: 0;
     padding: 6px 13px;
 }
+table tr th:first-child, 
+table tr td:first-child {
+    border-left: 1px solid var(--tableborder-color);
+}
 table tr td {
-    border: 1px solid var(--tableborder-color);
-    text-align: left;
+    border-right: 1px solid var(--tableborder-color);
+    border-bottom: 1px solid var(--tableborder-color);
     margin: 0;
     padding: 6px 13px;
 }
@@ -509,14 +512,6 @@ table tr:last-child td:last-child {
 }
 table tr:last-child td:first-child {
     border-bottom-left-radius: 5px;
-}
-table tr th:first-child,
-table tr td:first-child {
-    margin-top: 0;
-}
-table tr th:last-child,
-table tr td:last-child {
-    margin-bottom: 0;
 }
 table tr:hover {
     background-color: var(--tablefocusrow-color);
@@ -538,7 +533,7 @@ table tr:hover {
     border: 1px solid #d0d5d7;
 }
 .md-fences:hover {
-    box-shadow: #84A1A8 0px 8px 10px;
+    box-shadow: #84A1A8 0px 4px 6px;
 }
 .CodeMirror-gutters {
     border-right: 1px solid rgb(199, 159, 159);
@@ -588,6 +583,9 @@ table tr:hover {
     color: var(--code-color);
     background-color: var(--codebg-color);
 }
+#write code:hover {
+    box-shadow: #84A1A8 0px 2px 3px;
+}
 /* 分割线 */
 hr {
     width: 80%;
@@ -621,7 +619,7 @@ img {
     border-radius: 5px;
 }
 img:hover {
-    box-shadow: #84A1A8 0px 10px 15px;
+    box-shadow: #84A1A8 0px 4px 6px;
 }
 .md-tag {
     color: inherit;
@@ -636,7 +634,7 @@ img:hover {
 .outline-content {
     background-color: var(--sidebarbg-color);
     border-radius: 30px;
-    box-shadow: #84A1A8 0px 10px 15px;
+    box-shadow: #84A1A8 0px 8px 10px;
 }
 .outline-item {
     font-size: 16px;
@@ -658,7 +656,7 @@ img:hover {
 #write ul>li:not(.tab):before,
 #write .ul>.li:not(.tab):before {
     margin-left: -22px;
-    margin-top: 9px;
+    margin-top: 8px;
     width: .62em;
     height: .62em;
     border: .1em solid var(--ulol-color);
@@ -704,6 +702,11 @@ img:hover {
     font-size: .65em;
     line-height: 1.60em;
 }
+/* 滚动条 */
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-color) !important;
+    background-clip: padding-box;
+}
 /* 打印 */
 @media print {
     html,
@@ -733,8 +736,8 @@ img:hover {
     --codeblockline-color: #e0f8f8;/* 代码块选中行颜色（青色） */
     --titlebefore-color: #00c4b6;/* 各级标题点缀颜色（绿色） */
     --codeblocknum-color: rgba(128, 128, 255, 0.8);/* 代码块行编号颜色（蓝色） */
-    --blockquoteicon-color: #5fa7e4; /* blockquote提示图标色（蓝色） */
-    --blockquotebg-color: rgba(230, 230, 250, 0.2);/* blockquote背景色（淡蓝） */
+    --blockquoteicon-color: rgba(0, 196, 182, 0.8); /* blockquote提示图标色（绿色） */
+    --blockquotebg-color: rgba(238, 250, 240, 0.4);/* blockquote背景色（淡绿） */
     --ulol-color: #81accf;/* 有序无序列表前缀颜色（灰色） */
     --olfore-color: #fff;/* 有序列表字体颜色（白色） */
     --tableevenrow-color: rgba(238, 238, 238, 0.4);/* 表格偶数行颜色（淡灰） */
@@ -746,8 +749,8 @@ img:hover {
     --atext-color: black;/* 超链接文本颜色（黑色） */
     --ahover-color: #ffffffe6;/* 超链接悬停文本颜色（白色） */
     --abottom-color: #81d8cf;/* 超链接下划线颜色（青色） */
-    --code-color: #ff3502;/* 行内代码前景色（红色） */
-    --codebg-color: #f8f5ec;/* 行内代码背景色（淡红） */
+    --code-color: #ff6b02;/* 行内代码前景色（红色） */
+    --codebg-color: rgb(245, 245, 245);/* 行内代码背景色（灰色） */
     --highlight-color: red;/* 高亮文本前景色（红色） */
     --highlightbg-color: yellow; /* 高亮文本背景色（黄色） */
     --split-color: #00c4b6;/* 分割线颜色（绿色） */
@@ -756,7 +759,7 @@ img:hover {
     --sidelist-selected-color: #eeeeee;/* 侧边栏条目选中背景色（灰色） */
     --yamlbg-color: #f7f7f7;/* 头部YAML背景色（白色） */
     --yaml-color: #585858;/* 头部YAML字体颜色（黑色） */
-    --body-font: '思源黑体 CN', sans-serif;/* 字体 */
+    --body-font: Times, '思源黑体 CN', sans-serif;/* 字体 */
     --code-font: 'Consolas', '思源宋体', monospace;/* 代码块以及行内代码字体 */
 }
 
