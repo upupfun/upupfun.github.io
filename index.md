@@ -18,3 +18,6 @@
 
 [数据结构](https://pro.liano.top/sjjg)
 
+[Code(1)](https://pro.liano.top/leetcode-cpp(1))
+
+[Code(2)](https://pro.liano.top/leetcode-cpp(2))
