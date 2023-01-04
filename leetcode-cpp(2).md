@@ -498,7 +498,9 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
 }
 ```
 
-#### [天际线问题](https://leetcode.cn/problems/the-skyline-problem/)
+> 一次插一个节点，剩下的再放回优先队列
+
+#### [\*天际线问题](https://leetcode.cn/problems/the-skyline-problem/)
 
 **题目：**
 
@@ -515,5 +517,282 @@ ListNode* mergeKLists(vector<ListNode*>& lists) {
 > 输入：buildings = [[2,9,10],[3,7,15],[5,12,12],[15,20,10],[19,24,8]]
 > 输出：[[2,10],[3,15],[7,12],[12,0],[15,10],[20,8],[24,0]]
 
+<img src="https://assets.leetcode.com/uploads/2020/12/01/merged.jpg" alt="img" style="zoom: 67%;" />
+
 **题解：**
+
+首先对关键点(每个建筑的左右边缘)升序排列，然后依次找包含(左边缘小于等于，右边缘大于)某关键点的建筑物的最大高度。暴力方法就是对每个关键点都遍历每个建筑，找到最大高度；可以用优先队列优化，`push` 进左边缘符合的建筑，`pop` 出右边缘不符合的建筑，队列头元素始终是最大高度，这样只需遍历建筑一次。
+
+```cpp
+vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
+    vector<int> boundaries;
+    for (auto& building : buildings) {
+        boundaries.emplace_back(building[0]);
+        boundaries.emplace_back(building[1]);
+    }
+    // 对边缘排序
+    sort(boundaries.begin(), boundaries.end());
+    priority_queue<pair<int, int>> que;
+    vector<vector<int>> ret;
+    int n = buildings.size(), idx = 0;
+    for (auto& boundary : boundaries) {
+        // push
+        while (idx < n && buildings[idx][0] <= boundary) {
+            que.emplace(buildings[idx][2], buildings[idx][1]);
+            idx++;
+        }
+        // pop
+        while (!que.empty() && que.top().second <= boundary)
+            que.pop();
+        // 获取天际线高度
+        int maxn = que.empty() ? 0 : que.top().first;
+        if (ret.size() == 0 || maxn != ret.back()[1])
+            ret.push_back({boundary, maxn});
+    }
+    return ret;
+}
+```
+
+> 为什么能只遍历一次而不遗漏呢？
+
+首先，`idx` 一直往前推，会不会漏掉包含后面的关键点的建筑？
+
+不会。如果此建筑还没进 `que`，那么就还在后面，没漏掉；如果此建筑进了 `que`，那么就一定还没被 `pop`，没漏掉（假设被弹出了，因为被 `pop` 的条件是右边缘小于等于上一个关键点，又关键点是升序遍历的，所以右边缘肯定也小于等于此关键点，矛盾！）
+
+其次，会不会有包含此关键点的建筑没被 `push`？
+
+不会，因为 `buildings` 的左端是升序的，而 `push` 结束的条件是左端大于关键点，所以最后一个被 `push` 的建筑往后左端一定不符合。
+
+
+
+其实不需要对所有建筑边缘排序，可以在遍历建筑的过程中找出交汇点，获取目前会拔高天际线、且妨碍到前一个建筑物（的右端端点）的下一个建筑物，代码如下：
+
+```cpp
+vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
+    vector<vector<int>> ans;
+    priority_queue<pair<int, int>> max_heap; // <高度, 右端>
+    int i = 0, len = buildings.size();
+    int cur_x, cur_h;
+    while (i < len || !max_heap.empty()) {
+        if (max_heap.empty() || 
+            i < len && buildings[i][0] <= max_heap.top().second) {
+            cur_x = buildings[i][0];
+            while (i < len && cur_x == buildings[i][0]) {
+                max_heap.emplace(buildings[i][2], buildings[i][1]);
+                ++i;
+            }
+        }
+        else {
+            cur_x = max_heap.top().second;
+            while (!max_heap.empty() && cur_x >= max_heap.top().second)
+                max_heap.pop();
+        }
+        cur_h = (max_heap.empty()) ? 0 : max_heap.top().first;
+        if (ans.empty() || cur_h != ans.back()[1])
+            ans.push_back({cur_x, cur_h});
+    }
+    return ans;
+}
+```
+
+> 速度快，内存少，妙哉（其实没看懂，呜呜呜）
+
+### 双端队列
+
+#### [滑动窗口最大值](https://leetcode.cn/problems/sliding-window-maximum/)
+
+**题目：**
+
+给你一个整数数组 `nums`，有一个大小为 `k` 的滑动窗口从数组的最左侧移动到数组的最右侧。你只可以看到在滑动窗口内的 `k` 个数字。滑动窗口每次只向右移动一位。
+
+返回滑动窗口中的最大值。
+
+> 输入：nums = [1,3,-1,-3,5,3,6,7], k = 3
+> 输出：[3,3,5,5,6,7]
+
+**题解：**
+
+每当向右移动时，如果窗口左端就是队列左端，那么 `pop_front` ；把队列右边小于窗口右端的值全部 `pop_back`，再 `push_back(i)`，这样双端队列的最左端永远是当前窗口内的最大值。从左到右递减。
+
+```cpp
+vector<int> maxSlidingWindow(vector<int>& nums, int k) {
+    deque<int> dq;
+    vector<int> ans;
+    for (int i = 0; i < nums.size(); ++i) {
+        if (!dq.empty() && dq.front() == i - k)
+            dq.pop_front();
+        while (!dq.empty() && nums[dq.back()] < nums[i])
+            dq.pop_back();
+        dq.push_back(i);
+        if (i >= k - 1)
+            ans.push_back(nums[dq.front()]);
+    }
+    return ans;
+}
+```
+
+> 总觉得这种东西妙不可言，可能是水平不够🤣
+
+### 哈希表
+
+#### [两数之和](https://leetcode.cn/problems/two-sum/)
+
+**题目：**
+
+给定一个整数数组 `nums` 和一个整数目标值 `target`，请你在该数组中找出 **和为目标值** `target` 的那 **两个** 整数，并返回它们的数组下标。
+
+你可以假设每种输入只会对应一个答案。但是，数组中同一个元素在答案里不能重复出现。你可以按任意顺序返回答案。
+
+> 输入：nums = [2,7,11,15], target = 9
+> 输出：[0,1]
+
+**题解：**
+
+我们可以利用哈希表存储遍历过的值以及它们的位置，每次遍历到位置 i 的时候，查找哈希表里是否存在 target - nums[i]，若存在，则说明这两个值的和为 target。
+
+```cpp
+vector<int> twoSum(vector<int>& nums, int target) {
+    unordered_map<int, int> hash;
+    vector<int> ans;
+    for (int i = 0; i < nums.size(); ++i) {
+        int num = nums[i];
+        auto pos = hash.find(target - num);
+        if (pos != hash.end()) {
+            ans.push_back(pos->second);
+            ans.push_back(i);
+            return ans;
+        }
+        else
+            hash[num] = i;
+    }
+    return ans;
+}
+```
+
+#### [最长连续序列](https://leetcode.cn/problems/longest-consecutive-sequence/)
+
+**题目：**
+
+给定一个未排序的整数数组 `nums` ，找出数字连续的最长序列（不要求序列元素在原数组中连续）的长度。
+
+请你设计并实现时间复杂度为 `O(n)` 的算法解决此问题。
+
+> 输入：nums = [100,4,200,1,3,2]
+> 输出：4
+
+**题解：**
+
+我们可以把所有数字放到一个哈希表，然后不断地从哈希表中任意取一个值，并删除掉其之前之后的所有连续数字，然后更新目前的最长连续序列长度。重复这一过程，我们就可以找到所有的连续数字序列。
+
+```cpp
+int longestConsecutive(vector<int>& nums) {
+    unordered_set<int> hash;
+    for (const int & num: nums)
+        hash.insert(num);
+    int ans = 0;
+    while (!hash.empty()) {
+        int cur = *(hash.begin());
+        hash.erase(cur);
+        int next = cur + 1, prev = cur - 1;
+        while (hash.count(next))
+            hash.erase(next++);
+        while (hash.count(prev))
+            hash.erase(prev--);
+        ans = max(ans, next - prev - 1);
+    }
+    return ans;
+}
+```
+
+#### [直线上最多的点数](https://leetcode.cn/problems/max-points-on-a-line/)
+
+**题目：**
+
+给你一个数组 `points` ，其中 `points[i] = [xi, yi]` 表示 **X-Y** 平面上的一个点。求最多有多少个点在同一条直线上。(点不重复)
+
+> 输入：points = [[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]]
+> 输出：4
+
+**题解：**
+
+对每一个点，对不同斜率建立 `hash` 表。
+
+```cpp
+int maxPoints(vector<vector<int>>& points) {
+    unordered_map<double, int> hash;
+    int max_count = 0, same_x, same_y;
+    for (int i = 0; i < points.size(); ++i) {
+        same_x = same_y = 1;
+        for (int j = i+1; j < points.size(); ++j) {
+            if (points[i][1] == points[j][1])
+                ++same_y;
+            else if (points[i][0] == points[j][0])
+                ++same_x;
+            else {
+                double dx = points[i][0] - points[j][0], dy = points[i][1] - points[j][1];
+                ++hash[dx/dy];
+            }
+        }
+        max_count = max(max_count, max(same_x, same_y));
+        for (auto item : hash)
+            max_count = max(max_count, 1+item.second);
+        hash.clear();
+    }
+    return max_count;
+}
+```
+
+### 多重集合和映射
+
+#### [重新安排行程](https://leetcode.cn/problems/reconstruct-itinerary/)
+
+**题目：**
+
+给你一份航线列表 `tickets` ，其中 `tickets[i] = [fromi, toi]` 表示飞机出发和降落的机场地点。请你对该行程进行重新规划排序。
+
+所有这些机票都属于一个从 `JFK`（肯尼迪国际机场）出发的先生，所以该行程必须从 `JFK` 开始。如果存在多种有效的行程，请你按字典排序返回最小的行程组合。
+
+- 例如，行程 `["JFK", "LGA"]` 与 `["JFK", "LGB"]` 相比就更小，排序更靠前。
+
+假定所有机票至少存在一种合理的行程。且所有的机票 必须都用一次 且 只能用一次。
+
+> 输入：tickets = [["JFK","SFO"],["JFK","ATL"],["SFO","ATL"],["ATL","JFK"]，["ATL","SFO"]]
+> 输出：["JFK","ATL","JFK","SFO","ATL","SFO"]
+> 解释：另一种有效的行程是 ["JFK","SFO","ATL","JFK","ATL","SFO"] ，但是它字典排序更大更靠后。
+
+**题解：**
+
+本题可以先用哈希表记录起止机场，其中键是起始机场，值是一个多重集合，表示对应的终止机场。因为一个人可能坐过重复的线路，所以我们需要使用多重集合储存重复值。储存完成之后，我们可以利用栈来恢复从终点到起点飞行的顺序，再将结果逆序得到从起点到终点的顺序。
+
+```cpp
+vector<string> findItinerary(vector<vector<string>>& tickets) {
+    vector<string> ans;
+    if (tickets.empty())
+        return ans;
+    unordered_map<string, multiset<string>> hash;
+    for (const auto & ticket: tickets)
+        hash[ticket[0]].insert(ticket[1]);
+    stack<string> s;
+    s.push("JFK");
+    while (!s.empty()) {
+        string next = s.top();
+        if (hash[next].empty()) {
+            ans.push_back(next);
+            s.pop();
+        } 
+        else {
+            s.push(*hash[next].begin());
+            hash[next].erase(hash[next].begin());
+        }
+    }
+    reverse(ans.begin(), ans.end());
+    return ans;
+}
+```
+
+> 看不懂了😭
+
+### 前缀和与积分图
+
+一维的前缀和，二维的积分图，都是把每个位置之前的一维线段或二维矩形预先存储，方便加速计算。如果需要对前缀和或积分图的值做寻址，则要存在哈希表里；如果要对每个位置记录前缀和或积分图的值，则可以储存到一维或二维数组里，也常常伴随着动态规划。
 
