@@ -563,40 +563,6 @@ vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
 
 不会，因为 `buildings` 的左端是升序的，而 `push` 结束的条件是左端大于关键点，所以最后一个被 `push` 的建筑往后左端一定不符合。
 
-
-
-其实不需要对所有建筑边缘排序，可以在遍历建筑的过程中找出交汇点，获取目前会拔高天际线、且妨碍到前一个建筑物（的右端端点）的下一个建筑物，代码如下：
-
-```cpp
-vector<vector<int>> getSkyline(vector<vector<int>>& buildings) {
-    vector<vector<int>> ans;
-    priority_queue<pair<int, int>> max_heap; // <高度, 右端>
-    int i = 0, len = buildings.size();
-    int cur_x, cur_h;
-    while (i < len || !max_heap.empty()) {
-        if (max_heap.empty() || 
-            i < len && buildings[i][0] <= max_heap.top().second) {
-            cur_x = buildings[i][0];
-            while (i < len && cur_x == buildings[i][0]) {
-                max_heap.emplace(buildings[i][2], buildings[i][1]);
-                ++i;
-            }
-        }
-        else {
-            cur_x = max_heap.top().second;
-            while (!max_heap.empty() && cur_x >= max_heap.top().second)
-                max_heap.pop();
-        }
-        cur_h = (max_heap.empty()) ? 0 : max_heap.top().first;
-        if (ans.empty() || cur_h != ans.back()[1])
-            ans.push_back({cur_x, cur_h});
-    }
-    return ans;
-}
-```
-
-> 速度快，内存少，妙哉（其实没看懂，呜呜呜）
-
 ### 双端队列
 
 #### [滑动窗口最大值](https://leetcode.cn/problems/sliding-window-maximum/)
@@ -779,7 +745,7 @@ vector<string> findItinerary(vector<vector<string>>& tickets) {
         if (hash[next].empty()) {
             ans.push_back(next);
             s.pop();
-        } 
+        }
         else {
             s.push(*hash[next].begin());
             hash[next].erase(hash[next].begin());
@@ -790,9 +756,111 @@ vector<string> findItinerary(vector<vector<string>>& tickets) {
 }
 ```
 
-> 看不懂了😭
+> 妙哉！
 
 ### 前缀和与积分图
 
 一维的前缀和，二维的积分图，都是把每个位置之前的一维线段或二维矩形预先存储，方便加速计算。如果需要对前缀和或积分图的值做寻址，则要存在哈希表里；如果要对每个位置记录前缀和或积分图的值，则可以储存到一维或二维数组里，也常常伴随着动态规划。
+
+#### [Range Sum Query - Immutable](https://leetcode.com/problems/range-sum-query-immutable/)
+
+**题目：**
+
+Given an integer array `nums`, handle multiple queries of the following type:
+
+Calculate the **sum** of the elements of `nums` between indices `left` and `right` **inclusive** where `left <= right`.
+
+Implement the `NumArray` class:
+
+- `NumArray(int[] nums)` Initializes the object with the integer array `nums`.
+- `int sumRange(int left, int right)` Returns the **sum** of the elements of `nums` between indices `left` and `right` **inclusive** (i.e. `nums[left] + nums[left + 1] + ... + nums[right]`).
+
+**题解：**
+
+建立一个与数组 nums 长度相同的前缀和数组 psum，表示 nums 每个位置之前前所有数字的和。cpp 中可以用 `partial_sum` 函数实现。
+
+```cpp
+class NumArray {
+    vector<int> psum;
+    public:
+    NumArray(vector<int>& nums) {
+        psum.resize(nums.size() + 1);
+        partial_sum(nums.begin(), nums.end(), psum.begin() + 1);
+    }
+    int sumRange(int left, int right) {
+        return psum[right+1] - psum[left];
+    }
+};
+```
+
+#### [Range Sum Query 2D - Immutable](https://leetcode.com/problems/range-sum-query-2d-immutable/)
+
+**题目：**
+
+Given a 2D matrix `matrix`, handle multiple queries of the following type:
+
+Calculate the **sum** of the elements of `matrix` inside the rectangle defined by its **upper left corner** `(row1, col1)` and **lower right corner** `(row2, col2)`.
+
+Implement the `NumMatrix` class:
+
+- `NumMatrix(int[][] matrix)` Initializes the object with the integer matrix `matrix`.
+- `int sumRegion(int row1, int col1, int row2, int col2)` Returns the **sum** of the elements of `matrix` inside the rectangle defined by its **upper left corner** `(row1, col1)` and **lower right corner** `(row2, col2)`.
+
+You must design an algorithm where `sumRegion` works on `O(1)` time complexity.
+
+**题目：**
+
+类似于前缀和，我们可以把这种思想拓展到二维，即积分图（image integral）。我们可以先建立一个 intergral 矩阵，intergral\[i\]\[j\] 表示以位置 (0, 0) 为左上角、位置 (i-1, j-1) 为右下角的长方形中所有数字的和。计算可以用 dp
+
+```cpp
+class NumMatrix {
+    vector<vector<int>> integral;
+    public:
+    NumMatrix(vector<vector<int>> matrix) {
+        int m = matrix.size(), n = m > 0 ? matrix[0].size() : 0;
+        integral = vector<vector<int>>(m + 1, vector<int>(n + 1, 0));
+        for (int i = 1; i <= m; ++i) {
+            for (int j = 1; j <= n; ++j) {
+                integral[i][j] = matrix[i-1][j-1] + integral[i-1][j] + integral[i][j-1] - integral[i-1][j-1];
+            }
+        }
+    }
+    int sumRegion(int row1, int col1, int row2, int col2) {
+        return integral[row2+1][col2+1] - integral[row2+1][col1] - integral[row1][col2+1] + integral[row1][col1];
+    }
+};
+```
+
+#### [Subarray Sum Equals K](https://leetcode.com/problems/subarray-sum-equals-k/)
+
+**题目：**
+
+Given an array of integers `nums` and an integer `k`, return *the total number of subarrays whose sum equals to* `k`.
+
+A subarray is a contiguous **non-empty** sequence of elements within an array.
+
+> Input: nums = [1,2,3], k = 3
+> Output: 2
+
+**题解：**
+
+本题同样是利用前缀和，不同的是这里我们使用一个哈希表 hashmap，其键是前缀和，而值是该前缀和出现的次数。在我们遍历到位置 i 时，假设当前的前缀和是 `psum`，那么 `hashmap[psum-k]` 即为以当前位置结尾、满足条件的区间个数。
+
+```cpp
+int subarraySum(vector<int>& nums, int k) {
+    int count = 0, psum = 0;
+    unordered_map<int, int> hashmap;
+    hashmap[0] = 1; // 初始化很重要
+    for (int i: nums) {
+        psum += i;
+        count += hashmap[psum-k];
+        ++hashmap[psum];
+    }
+    return count;
+}
+```
+
+> 妙哉！😘
+
+### 练习
 
