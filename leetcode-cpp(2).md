@@ -864,3 +864,420 @@ int subarraySum(vector<int>& nums, int k) {
 
 ### 练习
 
+#### [Reshape the Matrix](https://leetcode.cn/problems/reshape-the-matrix/)
+
+**题目：**
+
+In MATLAB, there is a handy function called `reshape` which can reshape an `m x n` matrix into a new one with a different size `r x c` keeping its original data.
+
+You are given an `m x n` matrix `mat` and two integers `r` and `c` representing the number of rows and the number of columns of the wanted reshaped matrix.
+
+The reshaped matrix should be filled with all the elements of the original matrix **in the same row-traversing order** as they were.
+
+If the `reshape` operation with given parameters is possible and legal, output the new reshaped matrix; Otherwise, output the original matrix.
+
+> **in the same row-traversing order**：相同的行遍历顺序
+
+**题解：**
+
+行遍历顺序映射到一维数组，再映射回来即可。
+
+```cpp
+vector<vector<int>> matrixReshape(vector<vector<int>>& mat, int r, int c) {
+    int m = mat.size(), n = mat[0].size();
+    if (m * n != r * c)
+        return mat;
+    vector<int> tmp(m * n);
+    int pos = 0;
+    for (int i = 0; i < m; ++i)
+        for (int j = 0; j < n; ++j)
+            tmp[pos++] = mat[i][j];
+    pos = 0;
+    vector<vector<int>> ans(r, vector<int>(c));
+    for (int i = 0; i < r; ++i)
+        for (int j = 0; j < c; ++j)
+            ans[i][j] = tmp[pos++];
+    return ans;
+}
+```
+
+#### [Implement Stack using Queues](https://leetcode.cn/problems/implement-stack-using-queues/)
+
+**题目：**
+
+Implement a last-in-first-out (LIFO) stack using only two queues. The implemented stack should support all the functions of a normal stack (`push`, `top`, `pop`, and `empty`).
+
+Implement the `MyStack` class:
+
+- `void push(int x)` Pushes element x to the top of the stack.
+- `int pop()` Removes the element on the top of the stack and returns it.
+- `int top()` Returns the element on the top of the stack.
+- `boolean empty()` Returns `true` if the stack is empty, `false` otherwise.
+
+**题解：**
+
+借助辅助队列 `in` 实现栈存储顺序。
+
+```cpp
+class MyStack {
+    queue<int> in, out;
+    public:
+    MyStack() { }
+    void push(int x) {
+        in.push(x);
+        while(!out.empty()) {
+            in.push(out.front());
+            out.pop();
+        }
+        out = in;
+        in = queue<int>();
+    }
+    int pop() {
+        int x = out.front();
+        out.pop();
+        return x;
+    }
+    int top() {
+        return out.front();
+    }
+    bool empty() {
+        return out.empty();
+    }
+};
+```
+
+#### [Next Greater Element II](https://leetcode.cn/problems/next-greater-element-ii/)
+
+**题目：**
+
+Given a circular integer array `nums` (i.e., the next element of `nums[nums.length - 1]` is `nums[0]`), return *the **next greater number** for every element in* `nums`.
+
+The **next greater number** of a number `x` is the first greater number to its traversing-order next in the array, which means you could search circularly to find its next greater number. If it doesn't exist, return `-1` for this number.
+
+> Input: nums = [1,2,3,4,3]
+> Output: [2,3,4,-1,4]
+
+**题解：**
+
+单调栈加循环数组，一个朴素的思想是，我们可以把这个循环数组「拉直」，即复制该序列的前 n−1 个元素拼接在原序列的后面。这样我们就可以将这个新序列当作普通序列，用单调栈来处理。
+
+其实我们不需要显性地将该循环数组「拉直」，而只需要在处理时对下标取模即可。
+
+```cpp
+vector<int> nextGreaterElements(vector<int>& nums) {
+    int n = nums.size();
+    stack<int> day;
+    vector<int> ans(n, -1);
+    for (int i = 0; i < n*2 - 1; ++i) {
+        while(!day.empty()) {
+            int x = day.top();
+            if (nums[i%n] > nums[x]) {
+                ans[x] = nums[i%n];
+                day.pop();
+            }
+            else
+                break;
+        }
+        if (i < n)	// 避免重复计算
+            day.push(i);
+    }
+    return ans;
+}
+```
+
+#### [Contains Duplicate](https://leetcode.cn/problems/contains-duplicate/)
+
+**题目：**
+
+Given an integer array `nums`, return `true` if any value appears **at least twice** in the array, and return `false` if every element is distinct.
+
+> Input: nums = [1,2,3,1]
+> Output: true
+
+**题解：**
+
+hash表
+
+```cpp
+bool containsDuplicate(vector<int>& nums) {
+    unordered_set<int> s;
+    for (int x: nums) {
+        if (s.find(x) != s.end())
+            return true;
+        s.insert(x);
+    }
+    return false;
+}
+```
+
+#### [Degree of an Array](https://leetcode.cn/problems/degree-of-an-array/)
+
+**题目：**
+
+Given a non-empty array of non-negative integers `nums`, the **degree** of this array is defined as the maximum frequency of any one of its elements.
+
+Your task is to find the smallest possible length of a (contiguous) subarray of `nums`, that has the same degree as `nums`.
+
+> Input: nums = [1,2,2,3,1,4,2]
+> Output: 6
+
+**题解：**
+
+一眼滑动窗口，复习一下啦
+
+```cpp
+int findShortestSubArray(vector<int> &nums) {
+    int n = nums.size();
+    int freq[50000];//记录频数
+    memset(freq, 0, sizeof(freq));
+    int degree = 0;//记录数组度
+    for (int i = 0; i < n; i++)
+        degree = max(++freq[nums[i]], degree);
+    memset(freq, 0, sizeof(freq));
+    int left = 0, right = 0, minSpan = INT_MAX;//窗口边界和最小跨度
+    while (right < n) {
+        freq[nums[right]]++;//右窗口划进一个数，其频数加一
+        while (left <= right && degree == freq[nums[right]]) {
+            minSpan = min(minSpan, right - left + 1);//记录最小窗口大小
+            freq[nums[left++]]--;//收缩左窗口
+        }
+        ++right;//扩大右窗口
+    }
+    return minSpan;
+}
+```
+
+当然可以用 hash，每一个数映射到一个长度为 3 的数组，数组中的三个元素分别代表这个数出现的次数、这个数在原数组中第一次出现的位置和这个数在原数组中最后一次出现的位置。当我们记录完所有信息后，我们需要遍历该哈希表，找到元素出现次数最多，且前后位置差最小的数。
+
+```cpp
+int findShortestSubArray(vector<int>& nums) {
+    unordered_map<int, vector<int>> mp;
+    int n = nums.size();
+    for (int i = 0; i < n; i++) {
+        if (mp.count(nums[i])) {
+            mp[nums[i]][0]++;
+            mp[nums[i]][2] = i;
+        }
+        else
+            mp[nums[i]] = {1, i, i};
+    }
+    int maxNum = 0, minLen = 0;
+    for (auto& [_, vec] : mp) {	//c++17 [结构化绑定]，分解初始化
+        if (maxNum < vec[0]) {
+            maxNum = vec[0];
+            minLen = vec[2] - vec[1] + 1;
+        }
+        else if (maxNum == vec[0]) {
+            if (minLen > vec[2] - vec[1] + 1)
+                minLen = vec[2] - vec[1] + 1;
+        }
+    }
+    return minLen;
+}
+```
+
+#### [Longest Harmonious Subsequence](https://leetcode.cn/problems/longest-harmonious-subsequence/)
+
+**题目：**
+
+We define a harmonious array as an array where the difference between its maximum value and its minimum value is **exactly** `1`.
+
+Given an integer array `nums`, return *the length of its longest harmonious subsequence among all its possible subsequences*.
+
+A **subsequence** of array is a sequence that can be derived from the array by deleting some or no elements without changing the order of the remaining elements.
+
+> Input: nums = [1,3,2,2,5,2,3,7]
+> Output: 5
+> Explanation: The longest harmonious subsequence is [3,2,2,2,3].
+
+**题解：**
+
+可以先排序，然后滑动窗口。
+
+```cpp
+int findLHS(vector<int>& nums) {
+    sort(nums.begin(), nums.end());
+    int l = 0, r = 0, ans = 0;
+    while(r < nums.size()) {
+        while(l < r && nums[r] - nums[l] > 1)
+            ++l;
+        if (nums[r] == nums[l] + 1)
+            ans = max(ans, r-l+1);
+        ++r;
+    }
+    return ans;
+}
+```
+
+用一个哈希映射来存储每个数出现的次数，和谐子序列的长度等于 x 和 x+1 出现的次数和
+
+```cpp
+int findLHS(vector<int>& nums) {
+    unordered_map<int, int> cnt;
+    int res = 0;
+    for (int num : nums)
+        cnt[num]++;
+    for (auto [key, val] : cnt)
+        if (cnt.count(key + 1))
+            res = max(res, val + cnt[key + 1]);
+    return res;
+}
+```
+
+#### [Find the Duplicate Number](https://leetcode.cn/problems/find-the-duplicate-number/)
+
+**题目：**
+
+Given an array of integers `nums` containing `n + 1` integers where each integer is in the range `[1, n]` inclusive.
+
+There is only **one repeated number** in `nums`, return *this repeated number*.
+
+You must solve the problem **without** modifying the array `nums` and uses only constant extra space.
+
+> Input: nums = [1,3,4,2,2]
+> Output: 2
+
+**题解：**
+
+找重复的数和找消失的数差不多，标记负数法。
+
+```cpp
+int findDuplicate(vector<int>& nums) {
+    for (auto num : nums) {
+        int pos = abs(num) - 1;
+        if (nums[pos] > 0) 
+            nums[pos] = -nums[pos];
+        else
+            return pos + 1;
+    }
+    return 0;
+}
+```
+
+#### [Super Ugly Number](https://leetcode.cn/problems/super-ugly-number/)
+
+**题目：**
+
+A **super ugly number** is a positive integer whose **prime factors** are in the array `primes`.
+
+Given an integer `n` and an array of integers `primes`, return *the* `nth` ***super ugly number***.
+
+The `nth` **super ugly number** is **guaranteed** to fit in a **32-bit** signed integer.
+
+> **prime factors**：质数因子
+
+> Input: n = 12, primes = [2,7,13,19]
+> Output: 32
+> Explanation: [1,2,4,7,8,13,14,16,19,26,28,32] is the sequence of the first 12 super ugly numbers given primes = [2,7,13,19].
+
+**题解：**
+
+优先队列，起始先将最小丑数 1 放入队列，每次从队列取出最小值 x，然后将 x 所对应的丑数 x\*primes[i] 进行入队。循环多次，第 n 次出队的值即是答案。
+
+需要防止重复入队。
+
+```cpp
+int nthSuperUglyNumber(int n, vector<int>& primes) {
+    priority_queue<int, vector<int>, greater<int>> q;	//最小堆
+    q.push(1);
+    while (1) {
+        n--;
+        int x = q.top();
+        q.pop();
+        if (n == 0)
+            return x;
+        for (int k : primes) {
+            if (k <= INT_MAX / x) 
+                q.push(k * x);
+            if (x % k == 0) //去重
+                break;
+        }
+    }
+    return 0;
+}
+```
+
+> 假设 prime = {2, 3, 5}，那么 $x=2^i\times3^j\times5^k$ ，定义如下：
+>
+> - 只要 i 不为 0，都由 $2^{(i-1)} \times 3^j \times 5^k$ 生成 x
+> - 当 i 为 0 时，只要 j 不为 0， 都由 $3^{(j-1)} \times 5^k$ 生成 x 
+> - 当 i, j 都为 0 时，由 $5^{(k-1)}$ 生成 x
+>
+> 就是总是用较大的部分乘以 prime 来生成。
+
+> 数学真头疼😢
+
+#### [Advantage Shuffle](https://leetcode.cn/problems/advantage-shuffle/)
+
+**题目：**
+
+You are given two integer arrays `nums1` and `nums2` both of the same length. The **advantage** of `nums1` with respect to `nums2` is the number of indices `i` for which `nums1[i] > nums2[i]`.
+
+Return *any permutation of* `nums1` *that maximizes its **advantage** with respect to* `nums2`.
+
+> Input: nums1 = [2,7,11,15], nums2 = [1,10,4,11]
+> Output: [2,11,7,15]
+
+**题解：**
+
+有重复的数，需要有序，用 `multiset`；田忌赛马原理，要么略赢一筹，要么输得彻底。
+
+```cpp
+vector<int> advantageCount(vector<int>& nums1, vector<int>& nums2) {
+    int n = nums1.size();
+    vector<int> ans(n);
+    multiset<int> h;
+    for (int i = 0; i < n; ++i) 
+        h.insert(nums1[i]);
+    for (int i = 0; i < n; ++i) {
+        auto it = h.upper_bound(nums2[i]);
+        if (it == h.end()) 
+            it = h.begin();
+        ans[i] = *it;
+        h.erase(it);
+    }
+    return ans;
+}
+```
+
+<div style="page-break-after: always;"></div>
+
+## 字符串
+
+### 字符串比较
+
+#### [Valid Anagram](https://leetcode.cn/problems/valid-anagram/)
+
+**题目：**
+
+Given two strings `s` and `t`, return `true` *if* `t` *is an **anagram** of* `s`*, and* `false` *otherwise*.
+
+An **Anagram** is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.
+
+> **anagram**：相同字母异序词
+
+> Input: s = "anagram", t = "nagaram"
+> Output: true
+
+**题解：**
+
+直接 hash 数组即可
+
+```cpp
+bool isAnagram(string s, string t) {
+    if (s.length() != t.length())
+        return false;
+    int hash[26];
+    memset(hash, 0, sizeof(hash));
+    for (int i = 0; i < s.length(); ++i) {
+        ++hash[s[i] - 'a'];
+        --hash[t[i] - 'a'];
+    }
+    for (int i = 0; i < 26; ++i) {
+        if (hash[i])
+            return false;
+    }
+    return true;
+}
+```
+
