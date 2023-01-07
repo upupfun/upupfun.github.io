@@ -1281,3 +1281,371 @@ bool isAnagram(string s, string t) {
 }
 ```
 
+#### [Isomorphic Strings](https://leetcode.cn/problems/isomorphic-strings/)
+
+**题目：**
+
+Given two strings `s` and `t`, *determine if they are isomorphic*.
+
+Two strings `s` and `t` are isomorphic if the characters in `s` can be replaced to get `t`.
+
+All occurrences of a character must be replaced with another character while preserving the order of characters. No two characters may map to the same character, but a character may map to itself.
+
+> Input: s = "egg", t = "add"
+> Output: true
+
+**题解：**
+
+用数组记录字符上次出现的位置
+
+```cpp
+bool isIsomorphic(string s, string t) {
+    if (s.length() != t.length())
+        return false;
+    int hash1[128], hash2[128];
+    memset(hash1, 0, sizeof(hash1));
+    memset(hash2, 0, sizeof(hash2));
+    for (int i = 0; i < s.length(); ++i) {
+        if (hash1[s[i]] != hash2[t[i]])
+            return false;
+        hash1[s[i]] = hash2[t[i]] = i + 1;
+    }
+    return true;
+}
+```
+
+#### [Palindromic Substrings](https://leetcode.cn/problems/palindromic-substrings/)
+
+**题目：**
+
+Given a string `s`, return *the number of **palindromic substrings** in it*.
+
+A string is a **palindrome** when it reads the same backward as forward.
+
+A **substring** is a contiguous sequence of characters within the string.
+
+> Input: s = "aaa"
+> Output: 6
+> Explanation: Six palindromic strings: "a", "a", "a", "aa", "aa", "aaa".
+
+**题解：**
+
+从每个位置开始从向左右延伸为回文字符串，注意奇偶长度，可以设置辅助函数
+
+```cpp
+int countSubstrings(string s) {
+    int count = 0;
+    for (int i = 0; i < s.length(); ++i) {
+        count += extendSubstrings(s, i, i); // 奇数长度
+        count += extendSubstrings(s, i, i + 1); // 偶数长度
+    }
+    return count;
+}
+int extendSubstrings(string s, int l, int r) {
+    int count = 0;
+    while (l >= 0 && r < s.length() && s[l] == s[r]) {
+        --l;
+        ++r;
+        ++count;
+    }
+    return count;
+}
+```
+
+#### [Count Binary Substrings](https://leetcode.cn/problems/count-binary-substrings/)
+
+**题目：**
+
+Given a binary string `s`, return the number of non-empty substrings that have the same number of `0`'s and `1`'s, and all the `0`'s and all the `1`'s in these substrings are grouped consecutively.
+
+Substrings that occur multiple times are counted the number of times they occur.
+
+> Input: s = "00110011"
+> Output: 6
+> Explanation: There are 6 substrings that have equal number of consecutive 1's and 0's: "0011", "01", "1100", "10", "0011", and "01".
+
+**题解：**
+
+从左往右遍历数组，记录和当前位置数字相同且连续的长度，以及其之前连续的不同数字的长度。举例来说，对于 00110 的最后一位，我们记录的相同数字长度是 1，因为只有一个连续 0；我们记录的不同数字长度是 2，因为在 0 之前有两个连续的 1。若不同数字的连续长度大于等于当前数字的连续长度，则说明存在一个且只存在一个以当前数字结尾的满足条件的子字符串。
+
+```cpp
+int countBinarySubstrings(string s) {
+    int pre = 0, cur = 1, count = 0;
+    for (int i = 1; i < s.length(); ++i) {
+        if (s[i] == s[i-1])
+            ++cur;
+        else {
+            pre = cur;
+            cur = 1;
+        }
+        if (pre >= cur)
+            ++count;
+    }
+    return count;
+}
+```
+
+### 字符串理解
+
+#### [Basic Calculator II](https://leetcode.cn/problems/basic-calculator-ii/)
+
+**题目：**
+
+Given a string `s` which represents an expression, *evaluate this expression and return its value*. 
+
+The integer division should truncate toward zero.
+
+You may assume that the given expression is always valid. All intermediate results will be in the range of `[-2^31, 2^31 - 1]`.
+
+> Input: s = "3+2*2"
+> Output: 7
+
+**题解：**
+
+用栈实现，碰到加减号就入栈，碰到乘除号就出栈相乘除，结果入栈。
+
+```cpp
+int calculate(string s) {
+    vector<int> stk;
+    char preSign = '+';
+    int num = 0;
+    for (int i = 0; i < s.length(); ++i) {
+        if (isdigit(s[i]))
+            num = num * 10 + (s[i] - '0');	//注意加括号防止 int 溢出
+        if (!isdigit(s[i]) && s[i] != ' ' || i == s.length()-1) {
+            switch (preSign) {
+                case '+':
+                    stk.push_back(num);
+                    break;
+                case '-':
+                    stk.push_back(-num);
+                    break;
+                case '*':
+                    stk.back() *= num;
+                    break;
+                default:
+                    stk.back() /= num;
+            }
+            preSign = s[i];
+            num = 0;
+        }
+    }
+    return accumulate(stk.begin(), stk.end(), 0);
+}
+```
+
+### 字符串匹配
+
+#### [Find the Index of the First Occurrence in a String](https://leetcode.cn/problems/find-the-index-of-the-first-occurrence-in-a-string/)
+
+**题目：**
+
+Given two strings `needle` and `haystack`, return the index of the first occurrence of `needle` in `haystack`, or `-1` if `needle` is not part of `haystack`.
+
+> Input: haystack = "sadbutsad", needle = "sad"
+> Output: 0
+> Explanation: "sad" occurs at index 0 and 6.
+
+**题解：**
+
+KMP 算法来喽
+
+```cpp
+void Set_Next(vector<int> &next, string t) {
+    int j = 0, k = -1;
+    next[0] = -1;
+    while(j < t.length()) {
+        if (k == -1 || t[j] == t[k]) {
+            ++j; 
+            ++k;
+            if (t[j] != t[k]) next[j] = k;
+            else next[j] = next[k];
+        }
+        else k = next[k];
+    }
+}
+int strStr(string s, string t) {
+    int m = s.length(), n = t.length();
+    vector<int> next(n+1);	
+    Set_Next(next, t);
+    int i = 0, j = 0;
+    while (i < m && j < n) {
+        if (j == -1 || s[i] == t[j]) {
+            ++i;
+            ++j;
+        }
+        else j = next[j];
+    }
+    if (j >= n) return (i - t.length());
+    return -1;
+}
+```
+
+> 原理可参考：[模式匹配 KMP 算法 | Liano-Blog](https://liano.top/posts/b5cfc372/)
+
+### 练习
+
+#### [Longest Palindrome](https://leetcode.cn/problems/longest-palindrome/)
+
+**题目：**
+
+Given a string `s` which consists of lowercase or uppercase letters, return *the length of the **longest palindrome*** that can be built with those letters.
+
+Letters are **case sensitive**, for example, `"Aa"` is not considered a palindrome here.
+
+> Input: s = "abccccdd"
+> Output: 7
+> Explanation: One longest palindrome that can be built is "dccaccd", whose length is 7.
+
+**题解：**
+
+用 `hash` 表记录字符出现个数，每两个就可以令回文字符串长度增加 2，如果有奇数个，那么最后回文字符串长度可以再加 1
+
+```cpp
+int longestPalindrome(string s) {
+    unordered_map<char, int> count;
+    int ans = 0;
+    for (char c : s)
+        ++count[c];
+    for (auto p : count) {
+        int v = p.second;
+        ans += v / 2 * 2;
+        if (v % 2 == 1 && ans % 2 == 0)
+            ++ans;
+    }
+    return ans;
+}
+```
+
+#### [Longest Substring Without Repeating Characters](https://leetcode.cn/problems/longest-substring-without-repeating-characters/)
+
+**题目：**
+
+Given a string `s`, find the length of the **longest** **substring** without repeating characters.
+
+> Input: s = "abcabcbb"
+> Output: 3
+
+**题解：**
+
+滑窗，滑呀滑
+
+```cpp
+int lengthOfLongestSubstring(string s) {
+    if(s.length() == 0) 
+        return 0;
+    unordered_set<char> hash;
+    int ans = 0, l = 0;
+    for(int i = 0; i < s.length(); ++i){
+        while (hash.find(s[i]) != hash.end()){
+            hash.erase(s[l]);
+            l++;
+        }
+        ans = max(ans, i - l + 1);
+        hash.insert(s[i]);
+    }
+    return ans;  
+}
+```
+
+#### [Basic Calculator III](https://leetcode.cn/problems/basic-calculator-iii/)
+
+**题目：**
+
+Implement a basic calculator to evaluate a simple expression string.
+
+The expression string may contain open `(` and closing parentheses `)`, the plus `+` or minus sign `-`, non-negative integers and empty spaces ` `.
+
+The expression string contains only non-negative integers, `+`, `-`, `*`, `/` operators , open `(` and closing parentheses `)` and empty spaces ``. The integer division should truncate toward zero.
+
+> input: (2+6 \* 3+5- (3 \* 15 / 7+2) \* 5)+3
+> output: -12
+
+**题解：**
+
+表达式计算 plus 版，其实没区别，遇到括号就递归计算，然后跳到右括号处。
+
+> 没会员，摆烂
+
+#### [Longest Palindromic Substring](https://leetcode.cn/problems/longest-palindromic-substring/)
+
+**题目：**
+
+Given a string `s`, return *the longest* *palindromic* *substring* in `s`.
+
+> Input: s = "babad"
+> Output: "bab"
+
+**题解：**
+
+滑窗法上面题目说过了，二维动态规划也可以做，这里介绍 `Manacher` 算法，时间复杂度 `O(n)`，嘎嘎快。
+
+> 直接搬力扣官方题解了。越来越懒了😢
+
+在中心扩展算法的过程中，我们能够得出每个位置的臂长。那么当我们要得出以下一个位置 i 的臂长时，能不能利用之前得到的信息呢？
+
+答案是肯定的。具体来说，如果位置 j 的臂长为 length，并且有 j + length > i，如下图所示：
+
+<img src="https://assets.leetcode-cn.com/solution-static/5/5_fig1.png" alt="img1" style="zoom:67%;" />
+
+当在位置 i 开始进行中心拓展时，我们可以先找到 i 关于 j 的对称点 2 * j - i。那么如果点 2 * j - i 的臂长等于 n，我们就可以知道，点 i 的臂长至少为 min(j + length - i, n)。那么我们就可以直接跳过 i 到 i + min(j + length - i, n) 这部分，从 i + min(j + length - i, n) + 1 开始拓展。
+
+我们只需要在中心扩展法的过程中记录右臂在最右边的回文字符串，将其中心作为 j，在计算过程中就能最大限度地避免重复计算。
+
+那么现在还有一个问题：如何处理长度为偶数的回文字符串呢？
+
+我们可以通过一个特别的操作将奇偶数的情况统一起来：我们向字符串的头尾以及每两个字符中间添加一个特殊字符 #，比如字符串 aaba 处理后会变成 #a#a#b#a#。那么原先长度为偶数的回文字符串 aa 会变成长度为奇数的回文字符串 #a#a#，而长度为奇数的回文字符串 aba 会变成长度仍然为奇数的回文字符串 #a#b#a#，我们就不需要再考虑长度为偶数的回文字符串了。
+
+注意这里的特殊字符不需要是没有出现过的字母，我们可以使用任何一个字符来作为这个特殊字符。这是因为，当我们只考虑长度为奇数的回文字符串时，每次我们比较的两个字符奇偶性一定是相同的，所以原来字符串中的字符不会与插入的特殊字符互相比较，不会因此产生问题。
+
+```cpp
+int expand(const string& s, int left, int right) {
+    while (left >= 0 && right < s.size() && s[left] == s[right]) {
+        --left;
+        ++right;
+    }
+    return (right - left - 2) / 2;
+}
+string longestPalindrome(string s) {
+    int start = 0, end = -1;
+    string t = "#";
+    for (char c: s) {
+        t += c;
+        t += '#';
+    }
+    t += '#';
+    s = t;
+    vector<int> arm_len;
+    int right = -1, j = -1;
+    for (int i = 0; i < s.size(); ++i) {
+        int cur_arm_len;
+        if (right >= i) {
+            int i_sym = j * 2 - i;
+            int min_arm_len = min(arm_len[i_sym], right - i);
+            cur_arm_len = expand(s, i - min_arm_len, i + min_arm_len);
+        }
+        else 
+            cur_arm_len = expand(s, i, i);
+        arm_len.push_back(cur_arm_len);
+        if (i + cur_arm_len > right) {
+            j = i;
+            right = i + cur_arm_len;
+        }
+        if (cur_arm_len * 2 + 1 > end - start) {
+            start = i - cur_arm_len;
+            end = i + cur_arm_len;
+        }
+    }
+    string ans;
+    for (int i = start; i <= end; ++i) {
+        if (s[i] != '#')
+            ans += s[i];
+    }
+    return ans;
+}
+```
+
+<div style="page-break-after: always;"></div>
+
+## 链表
+
