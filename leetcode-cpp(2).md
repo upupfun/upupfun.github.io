@@ -1586,7 +1586,7 @@ Given a string `s`, return *the longest* *palindromic* *substring* in `s`.
 
 答案是肯定的。具体来说，如果位置 j 的臂长为 length，并且有 j + length > i，如下图所示：
 
-<img src="https://assets.leetcode-cn.com/solution-static/5/5_fig1.png" alt="img1" style="zoom:67%;" />
+![fig1](./leetcode-cpp(2).assets/fig1.png)
 
 当在位置 i 开始进行中心拓展时，我们可以先找到 i 关于 j 的对称点 2 * j - i。那么如果点 2 * j - i 的臂长等于 n，我们就可以知道，点 i 的臂长至少为 min(j + length - i, n)。那么我们就可以直接跳过 i 到 i + min(j + length - i, n) 这部分，从 i + min(j + length - i, n) + 1 开始拓展。
 
