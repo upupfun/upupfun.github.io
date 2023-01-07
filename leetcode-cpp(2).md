@@ -1565,6 +1565,55 @@ The expression string contains only non-negative integers, `+`, `-`, `*`, `/` op
 
 表达式计算 plus 版，其实没区别，遇到括号就递归计算，然后跳到右括号处。
 
+```cpp
+int findClosing(string s) {
+    int level = 0, i = 0;
+    for (i = 0; i < s.length(); ++i) {
+        if (s[i] == '(') 
+            level++;
+        else if (s[i] == ')') {
+            level--;
+            if (level == 0) break;
+        }
+        else continue;
+    }
+    return i;
+}
+int calculate(string s) {
+    vector<int> stk;
+    char preSign = '+';
+    int num = 0;
+    for (int i = 0; i < s.length(); ++i) {
+        if (isdigit(s[i]))
+            num = num * 10 + (s[i] - '0');
+        if (s[i] == '(') {
+            int j = findClosing(s.substr(i));
+            num = calculate(s.substr(i+1, j-1));
+            i += j;
+        }
+        if (!isdigit(s[i]) && s[i] != ' ' || i == s.length()-1) {
+            switch (preSign) {
+                case '+':
+                    stk.push_back(num);
+                    break;
+                case '-':
+                    stk.push_back(-num);
+                    break;
+                case '*':
+                    stk.back() *= num;
+                    break;
+                case '/':
+                    stk.back() /= num;
+                    break;
+            }
+            preSign = s[i];
+            num = 0;
+        }
+    }
+    return accumulate(stk.begin(), stk.end(), 0);
+}
+```
+
 > 没会员，摆烂
 
 #### [Longest Palindromic Substring](https://leetcode.cn/problems/longest-palindromic-substring/)
