@@ -1698,3 +1698,446 @@ string longestPalindrome(string s) {
 
 ## 链表
 
+ 链表是由节点和指针构成的数据结构，每个节点存有一个值，和一个指向下一个节点的指针，因此很多链表问题可以用递归来处理。LeetCode 默认的链表表示方法如下：
+
+```cpp
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+```
+
+由于在进行链表操作时，尤其是删除节点时，经常会因为对当前节点进行操作而导致内存或指针出现问题。有两个小技巧可以解决这个问题：一是尽量处理当前节点的下一个节点而非当前节点本身，二是建立一个虚拟节点 (`dummy node`)，使其指向当前链表的头节点，这样即使原链表所有节点全被删除，也会有一个 `dummy` 存在，返回 `dummy->next` 即可。
+
+### 基本操作
+
+#### [Reverse Linked List](https://leetcode.cn/problems/reverse-linked-list/)
+
+**题目：**
+
+Given the `head` of a singly linked list, reverse the list, and return *the reversed list*.
+
+**题解：**
+
+递归写法：
+
+```cpp
+ListNode* reverseList(ListNode* head, ListNode* prev=nullptr) {
+    if (!head) {
+        return prev;
+    }
+    ListNode* next = head->next;
+    head->next = prev;
+    return reverseList(next, head);
+}
+```
+
+非递归写法：
+
+```cpp
+ListNode* reverseList(ListNode* head) {
+    ListNode *prev = nullptr, *next;
+    while (head) {
+        next = head->next;
+        head->next = prev;
+        prev = head;
+        head = next;
+    }
+    return prev;
+}
+```
+
+#### [Merge Two Sorted Lists](https://leetcode.cn/problems/merge-two-sorted-lists/)
+
+**题目：**
+
+You are given the heads of two sorted linked lists `list1` and `list2`.
+
+Merge the two lists in a one **sorted** list. The list should be made by splicing together the nodes of the first two lists.
+
+Return *the head of the merged linked list*.
+
+> Input: list1 = [1,2,4], list2 = [1,3,4]
+> Output: [1,1,2,3,4,4]
+
+**题解：**
+
+递归写法：
+
+```cpp
+ListNode* mergeTwoLists(ListNode* l1, ListNode* l2) {
+    if (!l2)
+        return l1;
+    if (!l1)
+        return l2;
+    if (l1->val > l2->val) {
+        l2->next = mergeTwoLists(l1, l2->next);
+        return l2;
+    }
+    l1->next = mergeTwoLists(l1->next, l2);
+    return l1;
+}
+```
+
+非递归写法：
+
+```cpp
+ListNode* mergeTwoLists(ListNode *l1, ListNode *l2) {
+    ListNode *dummy = new ListNode(0), *node = dummy;
+    while (l1 && l2) {
+        if (l1->val <= l2->val) {
+            node->next = l1;
+            l1 = l1->next;
+        }
+        else {
+            node->next = l2;
+            l2 = l2->next;
+        }
+        node = node->next;
+    }
+    node->next = l1 ? l1 : l2;
+    return dummy->next;
+}
+```
+
+#### [Swap Nodes in Pairs](https://leetcode.cn/problems/swap-nodes-in-pairs/)
+
+**题目：**
+
+Given a linked list, swap every two adjacent nodes and return its head. You must solve the problem without modifying the values in the list's nodes (i.e., only nodes themselves may be changed.)
+
+> Input: head = [1,2,3,4]
+> Output: [2,1,4,3]
+
+**题解：**
+
+递归写法：
+
+```cpp
+ListNode* swapPairs(ListNode* head) {
+    if (!head || !head->next)
+        return head;
+    ListNode* newHead = head->next;
+    head->next = swapPairs(newHead->next);
+    newHead->next = head;
+    return newHead;
+}
+```
+
+非递归写法：
+
+创建虚拟头结点 `dummyHead`，令 `temp` 表示当前到达的节点，初始时 `temp = dummyHead`。每次需要交换 `temp` 后面的两个节点。
+
+如果 `temp` 的后面没有节点或者只有一个节点，则没有更多的节点需要交换，因此结束交换。否则，获得 `temp` 后面的两个节点 `node1` 和 `node2`，通过更新节点的指针关系实现两两交换节点。
+
+具体而言，交换之前的节点关系是 `temp -> node1 -> node2`，交换之后的节点关系要变成 `temp -> node2 -> node1`，因此需要进行如下操作。
+
+```cpp
+temp.next = node2
+node1.next = node2.next
+node2.next = node1
+```
+
+完成上述操作之后，节点关系即变成 `temp -> node2 -> node1`。再令 `temp = node1`，对链表中的其余节点进行两两交换，直到全部节点都被两两交换。
+
+```cpp
+ListNode* swapPairs(ListNode* head) {
+    ListNode* dummyHead = new ListNode(0);
+    dummyHead->next = head;
+    ListNode* temp = dummyHead;
+    while (temp->next != nullptr && temp->next->next != nullptr) {
+        ListNode* node1 = temp->next;
+        ListNode* node2 = temp->next->next;
+        temp->next = node2;
+        node1->next = node2->next;
+        node2->next = node1;
+        temp = node1;
+    }
+    return dummyHead->next;
+}
+```
+
+> 原则上不对当前节点进行操作，所以会有 `dummyHead` 和 `temp`
+
+### 其他技巧
+
+#### [Intersection of Two Linked Lists](https://leetcode.cn/problems/intersection-of-two-linked-lists/)
+
+**题目：**
+
+Given the heads of two singly linked-lists `headA` and `headB`, return *the node at which the two lists intersect*. If the two linked lists have no intersection at all, return `null`.
+
+**Note** that the linked lists must **retain their original structure** after the function returns.
+
+> **intersect**: 交集
+
+**题解：**
+
+双指针法，我们使用两个指针，分别指向两个链表的头节点，并以相同的速度前进，若到达链表结尾，则移动到另一条链表的头节点继续前进。按照这种前进方法，两个指针会在 `a + b + c` 次前进后同时到达相交节点。
+
+```cpp
+ListNode *getIntersectionNode(ListNode *headA, ListNode *headB) {
+    ListNode *l1 = headA, *l2 = headB;
+    while (l1 != l2) {
+        l1 = l1 ? l1->next : headB;
+        l2 = l2 ? l2->next : headA;
+    }
+    return l1;
+}
+```
+
+#### [Palindrome Linked List](https://leetcode.cn/problems/palindrome-linked-list/)
+
+**题目：**
+
+Given the `head` of a singly linked list, return `true` *if it is a* *palindrome* *or* `false` *otherwise*.
+
+**题解：**
+
+可以直接把值复制进数组，对数组操作，但这样就失去了链表的乐趣🤣
+
+这里先使用快慢指针找到链表中点，快指针一次走两格，慢指针一次走一格，快指针走到终点时慢指针指向中点；再把链表切成两半，然后把后半段翻转；最后比较两半是否相等。
+
+```cpp
+// 主函数
+bool isPalindrome(ListNode* head) {
+    if (!head || !head->next)
+        return true;
+    ListNode *slow = head, *fast = head;
+    while (fast->next && fast->next->next) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    slow->next = reverseList(slow->next);
+    slow = slow->next;
+    while (slow) {
+        if (head->val != slow->val)
+            return false;
+        head = head->next;
+        slow = slow->next;
+    }
+    return true;
+}
+// 辅函数
+ListNode* reverseList(ListNode* head) {
+    ListNode *prev = nullptr, *next;
+    while (head) {
+        next = head->next;
+        head->next = prev;
+        prev = head;
+        head = next;
+    }
+    return prev;
+}
+```
+
+### 练习
+
+#### [Remove Duplicates from Sorted List](https://leetcode.cn/problems/remove-duplicates-from-sorted-list/)
+
+**题目：**
+
+Given the `head` of a sorted linked list, *delete all duplicates such that each element appears only once*. Return *the linked list **sorted** as well*.
+
+**题解：**
+
+直接一次遍历即可
+
+```cpp
+ListNode* deleteDuplicates(ListNode* head) {
+    if (!head)
+        return head;
+    ListNode* cur = head;
+    while (cur->next) {
+        if (cur->val == cur->next->val)
+            cur->next = cur->next->next;
+        else
+            cur = cur->next;
+    }
+    return head;
+}
+```
+
+> 正常工程代码一定要记得 delete
+
+#### [Odd Even Linked List](https://leetcode.cn/problems/odd-even-linked-list/)
+
+**题目：**
+
+Given the `head` of a singly linked list, group all the nodes with odd indices together followed by the nodes with even indices, and return *the reordered list*.
+
+The **first** node is considered **odd**, and the **second** node is **even**, and so on.
+
+Note that the relative order inside both the even and odd groups should remain as it was in the input.
+
+You must solve the problem in `O(1)` extra space complexity and `O(n)` time complexity.
+
+> Input: head = [2,1,3,5,6,4,7]
+> Output: [2,3,6,7,1,5,4]
+
+**题解：**
+
+以第一个节点，第二个节点分别作为奇偶链表的头结点，然后隔一个添加一个节点。最后链接两个链表。
+
+ ```cpp
+ ListNode* oddEvenList(ListNode* head) {
+     if (!head)
+         return head;
+     ListNode *odd = head, *evenhead = head->next, *even = evenhead;
+     while (even && even->next) {
+         odd->next = odd->next->next;
+         even->next = even->next->next;
+         odd = odd->next;
+         even = even->next;
+     }
+     odd->next = evenhead;
+     return head;
+ }
+ ```
+
+#### [Remove Nth Node From End of List](https://leetcode.cn/problems/remove-nth-node-from-end-of-list/)
+
+**题目：**
+
+Given the `head` of a linked list, remove the `nth` node from the end of the list and return its head.
+
+**题解：**
+
+使用双指针，快指针比慢指针提前 n 个节点，那么快指针到终点时，慢指针指向位置即倒数第 n 个节点。为了便于删除，我们需要慢指针再慢一个节点，最后慢指针指向目标删除节点的前驱。
+
+```cpp
+ListNode* removeNthFromEnd(ListNode* head, int n) {
+    ListNode* dummy = new ListNode(0, head);
+    ListNode* first = head;
+    ListNode* second = dummy;
+    for (int i = 0; i < n; ++i)
+        first = first->next;
+    while (first) {
+        first = first->next;
+        second = second->next;
+    }
+    second->next = second->next->next;
+    return dummy->next;
+}
+```
+
+#### [Sort List](https://leetcode.cn/problems/sort-list/)
+
+**题目：**
+
+Given the `head` of a linked list, return *the list after sorting it in **ascending order***.
+
+> Input: head = [-1,5,3,4,0]
+> Output: [-1,0,3,4,5]
+
+**题解：**
+
+快慢指针找中点，归并排序。递归实现
+
+```cpp
+ListNode* sortList(ListNode* head) {
+    return sortList(head, nullptr);
+}
+ListNode* sortList(ListNode* head, ListNode* tail) {
+    if (head == nullptr)
+        return head;
+    if (head->next == tail) {
+        head->next = nullptr;
+        return head;
+    }
+    ListNode* slow = head, *fast = head;
+    while (fast != tail && fast->next != tail) {
+        slow = slow->next;
+        fast = fast->next->next;
+    }
+    ListNode* mid = slow;
+    return merge(sortList(head, mid), sortList(mid, tail));
+}
+ListNode* merge(ListNode* head1, ListNode* head2) {
+    ListNode* dummyHead = new ListNode(0);
+    ListNode* temp = dummyHead, *temp1 = head1, *temp2 = head2;
+    while (temp1 != nullptr && temp2 != nullptr) {
+        if (temp1->val <= temp2->val) {
+            temp->next = temp1;
+            temp1 = temp1->next;
+        } 
+        else {
+            temp->next = temp2;
+            temp2 = temp2->next;
+        }
+        temp = temp->next;
+    }
+    if (temp1 != nullptr)
+        temp->next = temp1;
+    else if (temp2 != nullptr)
+        temp->next = temp2;
+    return dummyHead->next;
+}
+```
+
+<div style="page-break-after: always;"></div>
+
+## 树
+
+作为链表的升级版，我们通常接触的树都是二叉树（`binary tree`），即每个节点最多有两个子节点；LeetCode 默认的树表示方法如下：
+
+```cpp
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode() : val(0), left(nullptr), right(nullptr) {}
+    TreeNode(int x) : val(x), left(nullptr), right(nullptr) {}
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+};
+```
+
+### 树的递归
+
+#### [Maximum Depth of Binary Tree](https://leetcode.cn/problems/maximum-depth-of-binary-tree/)
+
+**题目：**
+
+Given the `root` of a binary tree, return *its maximum depth*.
+
+A binary tree's **maximum depth** is the number of nodes along the longest path from the root node down to the farthest leaf node.
+
+**题解：**
+
+`one-line code`
+
+```cpp
+int maxDepth(TreeNode* root) {
+    return root? 1 + max(maxDepth(root->left), maxDepth(root->right)): 0;
+}
+```
+
+> cool！😘
+
+#### [Balanced Binary Tree](https://leetcode.cn/problems/balanced-binary-tree/)
+
+**题目：**
+
+Given a binary tree, determine if it is **height-balanced**.
+
+**题解：**
+
+```cpp
+// 主函数
+bool isBalanced(TreeNode* root) {
+    return helper(root) != -1;
+}
+// 辅函数
+int helper(TreeNode* root) {
+    if (!root)
+        return 0;
+    int left = helper(root->left), right = helper(root->right);
+    if (left == -1 || right == -1 || abs(left - right) > 1)
+        return -1;	// 避免重复计算
+    return 1 + max(left, right);
+}
+```
+
