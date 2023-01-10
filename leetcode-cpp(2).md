@@ -1,8 +1,6 @@
 # leetcode cpp
 
-## 目录
 
-[TOC]
 
 <div style="page-break-after: always;"></div>
 
@@ -2125,6 +2123,8 @@ Given a binary tree, determine if it is **height-balanced**.
 
 **题解：**
 
+递归。
+
 ```cpp
 // 主函数
 bool isBalanced(TreeNode* root) {
@@ -2140,4 +2140,145 @@ int helper(TreeNode* root) {
     return 1 + max(left, right);
 }
 ```
+
+#### [Diameter of Binary Tree](https://leetcode.cn/problems/diameter-of-binary-tree/)
+
+**题目：**
+
+Given the `root` of a binary tree, return *the length of the **diameter** of the tree*.
+
+The **diameter** of a binary tree is the **length** of the longest path between any two nodes in a tree. This path may or may not pass through the `root`.
+
+The **length** of a path between two nodes is represented by the number of edges between them.
+
+**题解：**
+
+递归。
+
+```cpp
+// 主函数
+int diameterOfBinaryTree(TreeNode* root) {
+    int diameter = 0;
+    helper(root, diameter);
+    return diameter;
+}
+// 辅函数
+int helper(TreeNode* node, int& diameter) {
+    if (!node)
+        return 0;
+    int l = helper(node->left,diameter), r = helper(node->right,diameter);
+    diameter = max(l + r, diameter);
+    return max(l, r) + 1;
+}
+```
+
+#### [Path Sum III](https://leetcode.cn/problems/path-sum-iii/)
+
+**题目：**
+
+Given the `root` of a binary tree and an integer `targetSum`, return *the number of paths where the sum of the values along the path equals* `targetSum`.
+
+The path does not need to start or end at the root or a leaf, but it must go downwards (i.e., traveling only from parent nodes to child nodes).
+
+**题解：**
+
+递归每个节点时，需要分情况考虑：
+
+- 如果选取该节点加入路径，则之后必须继续加入连续节点，或停止加入节点
+- 如果不选取该节点加入路径，则对其左右节点进行重新进行考虑。
+
+```cpp
+// 主函数
+int pathSum(TreeNode* root, int sum) {
+    return root? pathSumStartWithRoot(root, sum) + pathSum(root->left, sum) + pathSum(root->right, sum): 0;
+}
+// 辅函数
+int pathSumStartWithRoot(TreeNode* root, int sum) {
+    if (!root)
+        return 0;
+    int count = root->val == sum? 1: 0;
+    count += pathSumStartWithRoot(root->left, sum - root->val);
+    count += pathSumStartWithRoot(root->right, sum - root->val);
+    return count;
+}
+```
+
+#### [Symmetric Tree](https://leetcode.cn/problems/symmetric-tree/)
+
+**题目：**
+
+Given the `root` of a binary tree, *check whether it is a mirror of itself* (i.e., symmetric around its center).
+
+**题解**：
+
+判断两个子树是否相等或对称类型的题的解法叫做“四步法”：
+
+- 如果两个子树都为空指针，则它们相等或对称
+- 如果两个子树只有一个为空指针，则它们不相等或不对称
+- 如果两个子树根节点的值不相等，则它们不相等或不对称
+- 根据相等或对称要求，进行递归处理。
+
+```cpp
+// 主函数
+bool isSymmetric(TreeNode *root) {
+    return root? isSymmetric(root->left, root->right): true;
+}
+// 辅函数
+bool isSymmetric(TreeNode* left, TreeNode* right) {
+    if (!left && !right)
+        return true;
+    if (!left || !right)
+        return false;
+    if (left->val != right->val)
+        return false;
+    return isSymmetric(left->left,right->right) && isSymmetric(left->right, right->left);
+}
+```
+
+#### [Delete Nodes And Return Forest](https://leetcode.cn/problems/delete-nodes-and-return-forest/)
+
+**题目：**
+
+Given the `root` of a binary tree, each node in the tree has a distinct value.
+
+After deleting all nodes with a value in `to_delete`, we are left with a forest (a disjoint union of trees).
+
+Return the roots of the trees in the remaining forest. You may return the result in any order.
+
+> Input: root = [1,2,3,4,5,6,7], to_delete = [3,5]
+> Output: [[1,2,null,4],[6],[7]]
+
+**题解：**
+
+这道题最主要需要注意的细节是如果通过递归处理原树，以及需要在什么时候断开指针。同时，为了便于寻找待删除节点，可以建立一个哈希表方便查找。
+
+```cpp
+// 主函数
+vector<TreeNode*> delNodes(TreeNode* root, vector<int>& to_delete) {
+    vector<TreeNode*> forest;
+    unordered_set<int> dict(to_delete.begin(), to_delete.end());
+    root = helper(root, dict, forest);
+    if (root)
+        forest.push_back(root);
+    return forest;
+}
+// 辅函数
+TreeNode* helper(TreeNode* root, unordered_set<int> & dict, vector<TreeNode*> &forest) {
+    if (!root)
+        return root;
+    // 从底往上删
+    root->left = helper(root->left, dict, forest);
+    root->right = helper(root->right, dict, forest);
+    if (dict.count(root->val)) {
+        if (root->left)
+            forest.push_back(root->left);
+        if (root->right)
+            forest.push_back(root->right);
+        root = NULL;
+    }
+    return root;
+}
+```
+
+### 层次遍历
 
